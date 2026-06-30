@@ -1,0 +1,25 @@
+node_modules
+test-results
+dist
+
+# Playwright
+playwright-report
+
+# Coverage
+coverage
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# TypeScript
+*.tsbuildinfo
