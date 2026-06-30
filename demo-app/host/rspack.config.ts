@@ -6,7 +6,7 @@ export default defineConfig({
   entry: './src/main.tsx',
   output: {
     filename: '[name].[contenthash].js',
-    publicPath: 'http://localhost:3000/',
+    publicPath: process.env.PUBLIC_URL ?? 'http://localhost:3000/',
     clean: true,
   },
   resolve: {
@@ -31,9 +31,9 @@ export default defineConfig({
     new ModuleFederationPlugin({
       name: 'host',
       remotes: {
-        catalogRemote: 'catalogRemote@http://localhost:3001/remoteEntry.js',
-        cartRemote:    'cartRemote@http://localhost:3002/remoteEntry.js',
-        accountRemote: 'accountRemote@http://localhost:3003/remoteEntry.js',
+        catalogRemote: `catalogRemote@${process.env.CATALOG_URL ?? 'http://localhost:3001'}/remoteEntry.js`,
+        cartRemote:    `cartRemote@${process.env.CART_URL    ?? 'http://localhost:3002'}/remoteEntry.js`,
+        accountRemote: `accountRemote@${process.env.ACCOUNT_URL ?? 'http://localhost:3003'}/remoteEntry.js`,
       },
       shared: {
         react:                   { singleton: true, requiredVersion: '^18.3.0' },

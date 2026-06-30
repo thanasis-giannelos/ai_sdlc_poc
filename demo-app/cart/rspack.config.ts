@@ -6,7 +6,7 @@ export default defineConfig({
   entry: './src/main.tsx',
   output: {
     filename: '[name].[contenthash].js',
-    publicPath: 'http://localhost:3002/',
+    publicPath: process.env.PUBLIC_URL ?? 'http://localhost:3002/',
     clean: true,
   },
   resolve: {
