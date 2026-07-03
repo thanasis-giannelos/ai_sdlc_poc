@@ -1,0 +1,39 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# ROOT netlify.toml — for the HOST shell only.
+#
+# This is a Module Federation app made up of 4 independent Netlify sites:
+#
+#   Site          Base directory
+#   ──────────    ──────────────────
+#   host (this)   demo-app/host
+#   catalog       demo-app/catalog
+#   cart          demo-app/cart
+#   account       demo-app/account
+#
+# IMPORTANT: Deploy the three remotes FIRST, then come back and deploy this
+# host with the env vars below pointing at their live URLs.
+# See DEPLOYMENT.md for the full step-by-step guide.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[build]
+  base    = "demo-app/host"
+  command = "npm run build"
+  publish = "demo-app/host/dist"
+
+# Remote URLs are read by rspack at build time — set these in the Netlify UI
+# under Site configuration → Environment variables before triggering a build.
+#
+#   CATALOG_URL  = https://<your-catalog-site>.netlify.app
+#   CART_URL     = https://<your-cart-site>.netlify.app
+#   ACCOUNT_URL  = https://<your-account-site>.netlify.app
+#   PUBLIC_URL   = https://<this-host-site>.netlify.app/
+#
+# Without these the host will try to load remotes from localhost and fail.
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
