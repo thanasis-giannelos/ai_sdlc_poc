@@ -8,6 +8,19 @@ export const NavBar: React.FC = () => {
   const cartCount = useCartCountStore((s) => s.count);
   const setCount = useCartCountStore((s) => s.setCount);
 
+  // Seed the badge from localStorage so it's correct before CartPage ever mounts.
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('ministore:cart');
+      if (stored) {
+        const items = JSON.parse(stored) as Array<{ quantity: number }>;
+        setCount(items.reduce((s, i) => s + i.quantity, 0));
+      }
+    } catch {
+      // localStorage unavailable or invalid JSON — badge stays at 0
+    }
+  }, [setCount]);
+
   useEffect(() => {
     const handleUpdated = (e: Event) => {
       setCount((e as CustomEvent<{ count: number }>).detail.count);
