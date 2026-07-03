@@ -13,15 +13,13 @@ import { Footer } from '../shared/components/Footer';
 import type { Product } from '../features/cart/types';
 
 export const CartPage: React.FC = () => {
-  const { items, addItem, removeItem, updateQuantity } = useCartStore();
+  const { items, addItem, removeItem, updateQuantity, syncFromStorage } = useCartStore();
 
-  // Broadcast initial cart count so the host NavBar badge is accurate on mount
+  // On every mount, re-read localStorage so items added via the catalog's cart:add
+  // event (written directly by NavBar) are reflected without needing a hard refresh.
+  // syncFromStorage also dispatches cart:updated to keep the badge accurate.
   useEffect(() => {
-    window.dispatchEvent(
-      new CustomEvent('cart:updated', {
-        detail: { count: items.reduce((s: number, i: CartItem) => s + i.quantity, 0) },
-      })
-    );
+    syncFromStorage();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

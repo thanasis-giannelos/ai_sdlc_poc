@@ -30,6 +30,7 @@ interface CartStore {
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
+  syncFromStorage: () => void;
 }
 
 // Mock initial cart state for POC — replaced by real API/persistence post-POC
@@ -96,6 +97,14 @@ export const useCartStore = create<CartStore>((set) => ({
     dispatchCartUpdate(0);
     set({ items: [] });
   },
+  // Re-reads localStorage and syncs in-memory state. Call on CartPage mount to
+  // reconcile items written by NavBar's cart:add handler while CartPage was unmounted.
+  syncFromStorage: () =>
+    set(() => {
+      const items = getInitialItems();
+      dispatchCartUpdate(items.reduce((s, i) => s + i.quantity, 0));
+      return { items };
+    }),
 }));
 
 export const selectTotals = (items: CartItem[]) => {
