@@ -1,10 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { PrimaryButton } from '../../../shared/components/PrimaryButton';
 
 export const EmptyCartMessage: React.FC = () => {
-  const navigate = useNavigate();
-
   return (
     <div className="flex flex-col items-center justify-center py-20 gap-6 text-center">
       {/* Cart illustration placeholder */}
@@ -34,7 +31,7 @@ export const EmptyCartMessage: React.FC = () => {
       </div>
 
       <div className="w-48">
-        <PrimaryButton label="Continue Shopping" onClick={() => navigate('/')} />
+        <PrimaryButton label="Continue Shopping" onClick={() => window.history.back()} />
       </div>
     </div>
   );

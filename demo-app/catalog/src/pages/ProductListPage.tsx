@@ -45,7 +45,7 @@ export const ProductListPage: React.FC = () => {
   }, [search, selectedCategory, selectedSort]);
 
   const handleAddToCart = (product: Product) => {
-    console.info(`Added to cart: ${product.title}`);
+    window.dispatchEvent(new CustomEvent('cart:add', { detail: product }));
   };
 
   return (

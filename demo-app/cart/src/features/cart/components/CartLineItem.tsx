@@ -11,7 +11,7 @@ export const CartLineItem: React.FC<Props> = ({ item, onRemove, onQtyChange }) =
   const { product, quantity } = item;
 
   return (
-    <li className="flex gap-4 py-4 border-b border-neutral-200 last:border-0">
+    <li className="flex gap-4 py-4">
       <img
         src={product.imageUrl}
         alt={product.title}

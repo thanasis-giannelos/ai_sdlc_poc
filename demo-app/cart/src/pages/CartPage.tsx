@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../index.css';
 import {
   CartLineItem,
@@ -8,10 +8,32 @@ import {
   useCartStore,
   selectTotals,
 } from '../features/cart';
+import type { CartItem } from '../features/cart';
 import { Footer } from '../shared/components/Footer';
+import type { Product } from '../features/cart/types';
 
 export const CartPage: React.FC = () => {
-  const { items, removeItem, updateQuantity } = useCartStore();
+  const { items, addItem, removeItem, updateQuantity } = useCartStore();
+
+  // Broadcast initial cart count so the host NavBar badge is accurate on mount
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent('cart:updated', {
+        detail: { count: items.reduce((s: number, i: CartItem) => s + i.quantity, 0) },
+      })
+    );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Listen for add-to-cart events dispatched by the catalog remote
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const product = (e as CustomEvent<Product>).detail;
+      addItem(product);
+    };
+    window.addEventListener('cart:add', handler);
+    return () => window.removeEventListener('cart:add', handler);
+  }, [addItem]);
   const totals = selectTotals(items);
 
   return (

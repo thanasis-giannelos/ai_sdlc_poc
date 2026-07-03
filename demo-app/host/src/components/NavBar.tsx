@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCartCountStore } from '../store/cartStore';
 import { useAuth } from '../context/AuthContext';
@@ -6,6 +6,41 @@ import { useAuth } from '../context/AuthContext';
 export const NavBar: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const cartCount = useCartCountStore((s) => s.count);
+  const setCount = useCartCountStore((s) => s.setCount);
+
+  useEffect(() => {
+    const handleUpdated = (e: Event) => {
+      setCount((e as CustomEvent<{ count: number }>).detail.count);
+    };
+    window.addEventListener('cart:updated', handleUpdated);
+    return () => window.removeEventListener('cart:updated', handleUpdated);
+  }, [setCount]);
+
+  // Handle cart:add fired by catalog remote (CartPage may not be mounted yet)
+  useEffect(() => {
+    const handleAdd = (e: Event) => {
+      const product = (e as CustomEvent).detail as { id: string; [key: string]: unknown };
+      try {
+        const stored = localStorage.getItem('ministore:cart');
+        const items: Array<{ product: typeof product; quantity: number }> = stored
+          ? JSON.parse(stored)
+          : [];
+        const existing = items.find((i) => i.product.id === product.id);
+        const updated = existing
+          ? items.map((i) =>
+              i.product.id === product.id ? { ...i, quantity: i.quantity + 1 } : i
+            )
+          : [...items, { product, quantity: 1 }];
+        localStorage.setItem('ministore:cart', JSON.stringify(updated));
+        setCount(updated.reduce((s, i) => s + i.quantity, 0));
+      } catch {
+        // localStorage unavailable — badge won't update until CartPage mounts
+      }
+    };
+    window.addEventListener('cart:add', handleAdd);
+    return () => window.removeEventListener('cart:add', handleAdd);
+  }, [setCount]);
+
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
