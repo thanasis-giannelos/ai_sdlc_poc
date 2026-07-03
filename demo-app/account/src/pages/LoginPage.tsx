@@ -1,4 +1,5 @@
 import React from 'react';
+import '../index.css';
 import { LoginForm } from '../features/auth';
 import { Footer } from '../shared/components/Footer';
 
